@@ -67,15 +67,14 @@ export default function LecturerSidebar({ open, onNavigate }) {
                 <i className="fas fa-times"></i>
               </div>
             </div>
-            <Link to="/courses/allocate" onClick={onNavigate} style={{ textDecoration: 'none' }}>
-              <div className="logo-mark" style={{ margin: '0 auto 1rem' }}>
-                <i className="fas fa-graduation-cap"></i>
-              </div>
-              <div className="brand-title">C-DAC Bangalore</div>
-              <div className="role-pill" style={{ marginTop: '0.5rem' }}>
-                Learning Management System
-              </div>
+            <Link to="/courses/allocate" onClick={onNavigate}>
+              <img src="/assets/images/dj-lms.png" width="110px" alt="Logo Django LMS" />
             </Link>
+            <p className="text-orange">
+              <mark>
+                <i className="far fa-hand-point-right"></i> Admin
+              </mark>
+            </p>
           </div>
 
           <ul>
@@ -115,15 +114,20 @@ export default function LecturerSidebar({ open, onNavigate }) {
               </select>
             </form>
 
-            <p className="small m-0 text-center">
-              <strong>C-DAC Bangalore</strong>
+            <p className="small m-0">
+              Read our <a href="#">Privacy</a> and <a href="#">Terms of use</a>
               <br />
-              Centre for Development of
+              Django LMS ©
               <br />
-              Advanced Computing
-              <br />
-              <small className="text-muted">© 2024 C-DAC</small>
             </p>
+            <a
+              href="https://github.com/Vedprtpsingh/lmspro"
+              className="btn btn-sm btn-dark mx-auto"
+              target="_blank"
+              rel="noreferrer"
+            >
+              ⭐️ Star This Project
+            </a>
           </div>
         </footer>
       </aside>
