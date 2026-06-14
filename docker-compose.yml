@@ -1,0 +1,55 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: lmspro-mysql
+    environment:
+      MYSQL_DATABASE: lmspro
+      MYSQL_USER: lmspro
+      MYSQL_PASSWORD: lmspro
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    container_name: lmspro-backend
+    environment:
+      # Database Configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/lmspro?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: lmspro
+      SPRING_DATASOURCE_PASSWORD: lmspro
+      SPRING_DATASOURCE_DRIVER: com.mysql.cj.jdbc.Driver
+
+      # JPA Configuration
+      JPA_DDL_AUTO: update
+      JPA_SHOW_SQL: false
+
+      # CORS Configuration
+      APP_CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost
+
+      # H2 Console (disabled in production with MySQL)
+      H2_CONSOLE_ENABLED: false
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: lmspro-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
