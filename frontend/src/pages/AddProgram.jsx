@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { programsApi } from '../services/api';
+import { programsApi, metadataApi } from '../services/api';
 
 export default function AddProgram() {
   const navigate = useNavigate();
@@ -14,18 +14,34 @@ export default function AddProgram() {
     duration: '',
     description: '',
     status: 'Active',
-    center: 'C-DAC Bangalore',
+    center: '',
     department: '',
   });
 
+  const [metadata, setMetadata] = useState({
+    programLevels: [],
+    centers: [],
+    departments: [],
+    statuses: [],
+  });
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    fetchMetadata();
     if (isEditing) {
       fetchProgram();
     }
   }, [id]);
+
+  const fetchMetadata = async () => {
+    try {
+      const data = await metadataApi.getMetadata();
+      setMetadata(data);
+    } catch (err) {
+      console.error('Failed to load metadata:', err);
+    }
+  };
 
   const fetchProgram = async () => {
     try {
@@ -38,7 +54,7 @@ export default function AddProgram() {
         duration: data.duration,
         description: data.description || '',
         status: data.status,
-        center: data.center || 'C-DAC Bangalore',
+        center: data.center || '',
         department: data.department || '',
       });
     } catch (err) {
@@ -191,12 +207,11 @@ export default function AddProgram() {
                   required
                 >
                   <option value="">Select program type...</option>
-                  <option value="PG Diploma">PG Diploma</option>
-                  <option value="Advanced PG Diploma">Advanced PG Diploma</option>
-                  <option value="Certificate Course">Certificate Course</option>
-                  <option value="Short Term Course">Short Term Course</option>
-                  <option value="Professional Course">Professional Course</option>
-                  <option value="Executive Program">Executive Program</option>
+                  {metadata.programLevels.map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -232,8 +247,18 @@ export default function AddProgram() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  {metadata.statuses.length > 0 ? (
+                    metadata.statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </>
+                  )}
                 </select>
               </div>
             </div>
@@ -252,14 +277,11 @@ export default function AddProgram() {
                   onChange={handleChange}
                 >
                   <option value="">Select center...</option>
-                  <option value="C-DAC Bangalore">C-DAC Bangalore</option>
-                  <option value="C-DAC Pune">C-DAC Pune</option>
-                  <option value="C-DAC Mumbai">C-DAC Mumbai</option>
-                  <option value="C-DAC Noida">C-DAC Noida</option>
-                  <option value="C-DAC Kolkata">C-DAC Kolkata</option>
-                  <option value="C-DAC Hyderabad">C-DAC Hyderabad</option>
-                  <option value="C-DAC Thiruvananthapuram">C-DAC Thiruvananthapuram</option>
-                  <option value="C-DAC Mohali">C-DAC Mohali</option>
+                  {metadata.centers.map((center) => (
+                    <option key={center} value={center}>
+                      {center}
+                    </option>
+                  ))}
                 </select>
                 <div className="form-help-text">
                   <i className="fas fa-lightbulb"></i>
@@ -280,14 +302,11 @@ export default function AddProgram() {
                   onChange={handleChange}
                 >
                   <option value="">Select department...</option>
-                  <option value="ACTS">ACTS (Advanced Computing Training School)</option>
-                  <option value="ESDM">ESDM (Electronics System Design & Manufacturing)</option>
-                  <option value="HPCE">HPCE (High Performance Computing)</option>
-                  <option value="AAIMS">AAIMS (Advanced AI & ML Systems)</option>
-                  <option value="Cyber Security">Cyber Security</option>
-                  <option value="Internet of Things">Internet of Things</option>
-                  <option value="VLSI Design">VLSI Design</option>
-                  <option value="Embedded Systems">Embedded Systems</option>
+                  {metadata.departments.map((department) => (
+                    <option key={department} value={department}>
+                      {department}
+                    </option>
+                  ))}
                 </select>
                 <div className="form-help-text">
                   <i className="fas fa-lightbulb"></i>

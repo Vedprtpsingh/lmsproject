@@ -68,12 +68,13 @@ export default function LecturerSidebar({ open, onNavigate }) {
               </div>
             </div>
             <Link to="/courses/allocate" onClick={onNavigate} style={{ textDecoration: 'none' }}>
-              <img src="/assets/images/dj-lms.png" width="110px" alt="C-DAC Bangalore LMS Logo" />
-              <p className="text-orange mt-2">
-                <mark>
-                  <i className="far fa-hand-point-right"></i> C-DAC Bangalore Admin
-                </mark>
-              </p>
+              <div className="logo-mark" style={{ margin: '0 auto 1rem' }}>
+                <i className="fas fa-graduation-cap"></i>
+              </div>
+              <div className="brand-title">C-DAC Bangalore</div>
+              <div className="role-pill" style={{ marginTop: '0.5rem' }}>
+                Learning Management System
+              </div>
             </Link>
           </div>
 

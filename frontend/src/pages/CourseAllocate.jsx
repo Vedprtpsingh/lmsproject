@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { courseAllocationApi } from '../services/api';
+import { courseAllocationApi, metadataApi } from '../services/api';
 
 export default function CourseAllocate() {
   const navigate = useNavigate();
@@ -12,24 +12,27 @@ export default function CourseAllocate() {
   });
 
   const [lecturers, setLecturers] = useState([]);
+  const [metadata, setMetadata] = useState({
+    availableCourses: [],
+    sessions: [],
+    batches: [],
+  });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Available courses - can be loaded from backend later
-  const availableCourses = [
-    { code: 'CS101', name: 'Data Structures' },
-    { code: 'CS201', name: 'Database Management' },
-    { code: 'CS301', name: 'Web Development' },
-    { code: 'CS401', name: 'Machine Learning' },
-    { code: 'CS501', name: 'Software Engineering' },
-  ];
-
-  const sessions = ['2024-2025', '2025-2026', '2026-2027'];
-  const batches = ['February Batch', 'August Batch', 'September Batch'];
-
   useEffect(() => {
+    fetchMetadata();
     fetchLecturers();
   }, []);
+
+  const fetchMetadata = async () => {
+    try {
+      const data = await metadataApi.getMetadata();
+      setMetadata(data);
+    } catch (err) {
+      console.error('Failed to load metadata:', err);
+    }
+  };
 
   const fetchLecturers = async () => {
     try {
@@ -72,10 +75,10 @@ export default function CourseAllocate() {
 
       // Prepare data for backend
       const coursesList = formData.courses.map((courseId) => {
-        const course = availableCourses.find((c) => c.code === courseId);
+        const course = metadata.availableCourses.find((c) => c.code === courseId);
         return {
-          courseCode: course.code,
-          courseName: course.name,
+          courseCode: course?.code || courseId,
+          courseName: course?.name || courseId,
         };
       });
 
@@ -187,11 +190,15 @@ export default function CourseAllocate() {
                   required
                 >
                   <option value="">Choose session...</option>
-                  {sessions.map((session) => (
-                    <option key={session} value={session}>
-                      {session}
-                    </option>
-                  ))}
+                  {metadata.sessions.length > 0 ? (
+                    metadata.sessions.map((session) => (
+                      <option key={session} value={session}>
+                        {session}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No sessions available</option>
+                  )}
                 </select>
                 <div className="form-help-text">
                   <i className="fas fa-lightbulb"></i>
@@ -222,11 +229,15 @@ export default function CourseAllocate() {
                   required
                   style={{ minHeight: '180px' }}
                 >
-                  {availableCourses.map((course) => (
-                    <option key={course.code} value={course.code}>
-                      {course.code} - {course.name}
-                    </option>
-                  ))}
+                  {metadata.availableCourses.length > 0 ? (
+                    metadata.availableCourses.map((course) => (
+                      <option key={course.code} value={course.code}>
+                        {course.code} - {course.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No courses available</option>
+                  )}
                 </select>
                 <div className="form-help-text">
                   <i className="fas fa-info-circle"></i>
@@ -249,11 +260,15 @@ export default function CourseAllocate() {
                   required
                 >
                   <option value="">Choose batch...</option>
-                  {batches.map((batch) => (
-                    <option key={batch} value={batch}>
-                      {batch}
-                    </option>
-                  ))}
+                  {metadata.batches.length > 0 ? (
+                    metadata.batches.map((batch) => (
+                      <option key={batch} value={batch}>
+                        {batch}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No batches available</option>
+                  )}
                 </select>
                 <div className="form-help-text">
                   <i className="fas fa-lightbulb"></i>
@@ -268,12 +283,12 @@ export default function CourseAllocate() {
                   {formData.courses.length > 0 ? (
                     <ul>
                       {formData.courses.map((courseCode) => {
-                        const course = availableCourses.find(
+                        const course = metadata.availableCourses.find(
                           (c) => c.code === courseCode
                         );
                         return (
                           <li key={courseCode}>
-                            <strong>{course?.code}</strong> - {course?.name}
+                            <strong>{course?.code || courseCode}</strong> - {course?.name || courseCode}
                           </li>
                         );
                       })}

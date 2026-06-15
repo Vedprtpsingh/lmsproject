@@ -28,4 +28,14 @@ export const programCoursesApi = {
   delete: (programId, courseId) => api.delete(`/programs/${programId}/courses/${courseId}`),
 };
 
+// Metadata APIs
+export const metadataApi = {
+  getMetadata: () => api.get('/metadata').then(r => r.data),
+};
+
+// Menu APIs
+export const menuApi = {
+  getMenu: () => api.get('/menu').then(r => r.data),
+};
+
 export default api;

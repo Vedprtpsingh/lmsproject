@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { programCoursesApi } from '../services/api';
+import { metadataApi, programCoursesApi } from '../services/api';
 
 export default function AddCourse() {
   const navigate = useNavigate();
@@ -16,7 +16,18 @@ export default function AddCourse() {
     status: 'Active',
   });
 
+  const [metadata, setMetadata] = useState({
+    semesters: [],
+    courseTypes: [],
+    statuses: [],
+  });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    metadataApi.getMetadata()
+      .then((data) => setMetadata(data))
+      .catch((err) => console.error('Failed to load metadata:', err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -172,14 +183,24 @@ export default function AddCourse() {
                   required
                 >
                   <option value="">Select...</option>
-                  <option value="1st Semester">1st Semester</option>
-                  <option value="2nd Semester">2nd Semester</option>
-                  <option value="3rd Semester">3rd Semester</option>
-                  <option value="4th Semester">4th Semester</option>
-                  <option value="5th Semester">5th Semester</option>
-                  <option value="6th Semester">6th Semester</option>
-                  <option value="7th Semester">7th Semester</option>
-                  <option value="8th Semester">8th Semester</option>
+                  {metadata.semesters.length > 0 ? (
+                    metadata.semesters.map((semester) => (
+                      <option key={semester} value={semester}>
+                        {semester}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="1st Semester">1st Semester</option>
+                      <option value="2nd Semester">2nd Semester</option>
+                      <option value="3rd Semester">3rd Semester</option>
+                      <option value="4th Semester">4th Semester</option>
+                      <option value="5th Semester">5th Semester</option>
+                      <option value="6th Semester">6th Semester</option>
+                      <option value="7th Semester">7th Semester</option>
+                      <option value="8th Semester">8th Semester</option>
+                    </>
+                  )}
                 </select>
               </div>
 
@@ -197,11 +218,21 @@ export default function AddCourse() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="Core">Core</option>
-                  <option value="Elective">Elective</option>
-                  <option value="Optional">Optional</option>
-                  <option value="Lab">Lab</option>
-                  <option value="Project">Project</option>
+                  {metadata.courseTypes.length > 0 ? (
+                    metadata.courseTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Core">Core</option>
+                      <option value="Elective">Elective</option>
+                      <option value="Optional">Optional</option>
+                      <option value="Lab">Lab</option>
+                      <option value="Project">Project</option>
+                    </>
+                  )}
                 </select>
               </div>
 
@@ -219,8 +250,18 @@ export default function AddCourse() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  {metadata.statuses.length > 0 ? (
+                    metadata.statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </>
+                  )}
                 </select>
               </div>
             </div>
