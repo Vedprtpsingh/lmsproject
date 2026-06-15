@@ -9,6 +9,6 @@ import java.util.List;
 public interface CourseAllocationRepository extends JpaRepository<CourseAllocation, Long> {
     List<CourseAllocation> findByLecturerId(Long lecturerId);
     List<CourseAllocation> findBySession(String session);
-    List<CourseAllocation> findBySemester(String semester);
+    List<CourseAllocation> findByBatch(String batch);
     List<CourseAllocation> findByCourseCode(String courseCode);
 }
