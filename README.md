@@ -1,4 +1,4 @@
-# LMS Project - Beginner Guide
+# LMS Project - Guide
 
 ## 1. What is this project?
 
