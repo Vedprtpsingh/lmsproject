@@ -55,7 +55,7 @@ Important files:
 
 ---
 
-## 3. Quick start (beginner-friendly)
+## 3. Quick start
 
 ### Prerequisites
 
